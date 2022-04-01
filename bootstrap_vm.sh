@@ -59,12 +59,12 @@ ssh-keyscan -H 10.0.4.7 >> /home/$cur_user/.ssh/known_hosts
 
 ##################################################################################
 ##################################################################################
-#Set up autossh for reverse tunneling
+#Set up autossh for reverse tunneling to the current user, not the scanuser
 #Generate RSA key and copy it to .ssh for user
 ##################################################################################
 ##################################################################################
 
-ssh-keygen -f id_rsa -t rsa -N ''
+/bin/su -c "ssh-keygen -f id_rsa -t rsa -N ''" - $cur_user
 cp id_rsa.pub /home/$cur_user/.ssh/ &&\
 	cp id_rsa.pub /home/$cur_user/files_to_copy/ &&\
        	cp id_rsa.pub /home/$cur_user/.ssh/
