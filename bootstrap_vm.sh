@@ -16,7 +16,9 @@ apt -y autoremove
 
 #Install package dependencies
 apt install docker\
-	autossh
+	autossh\
+	moreutils\
+	rclone
 
 ##################################################################################
 ##################################################################################
@@ -64,6 +66,8 @@ ssh-keyscan -H 10.0.4.7 >> /home/$cur_user/.ssh/known_hosts
 ##################################################################################
 ##################################################################################
 
+#NEED TO COPY PRIVATE KEY LATER
+
 /bin/su -c "ssh-keygen -f id_rsa -t rsa -N ''" - $cur_user
 cp id_rsa.pub /home/$cur_user/.ssh/ &&\
 	cp id_rsa.pub /home/$cur_user/files_to_copy/ &&\
@@ -82,11 +86,6 @@ sed -i "s/[REMOTE HOST]/10.0.4.7/" rtunnel.service
 
 #copy to systemd
 cp rtunnel.service /etc/systemd/system/
-
-#reload the daemon and start service, enable it for autostart
-systemctl reload-daemon
-systemctl start rtunnel
-systemctl enable rtunnel
 
 ##################################################################################
 ##################################################################################
