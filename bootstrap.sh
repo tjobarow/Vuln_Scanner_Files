@@ -8,12 +8,13 @@ cur_user=$SUDO_USER
 # Perform system general maintainence
 ##################################################################################
 ##################################################################################
-
+echo "1. Performing system updates and general maintainence"
 #Update package list and distro
 apt update
 apt -y dist-upgrade
 apt -y autoremove
 
+echo "2. Installing needed dependencies"
 #Install package dependencies
 apt install docker\
 	autossh\
@@ -26,7 +27,7 @@ apt install docker\
 # New user creation
 ##################################################################################
 ##################################################################################
-
+echo "3. Adding new user: scanuser"
 useradd -m -p '$6$wbq32WAbYZ/Oz$x2z.HDBAWdTloVdUUMRTrqKeT4VHQEPVSuCR0kyek3iCIkyPIu0s9s0Au6VLbyZ3IVDeH/ER4xBXRIPs.4xmz/' -s /bin/bash scanuser
 
 ##################################################################################
@@ -35,6 +36,7 @@ useradd -m -p '$6$wbq32WAbYZ/Oz$x2z.HDBAWdTloVdUUMRTrqKeT4VHQEPVSuCR0kyek3iCIkyP
 ##################################################################################
 ##################################################################################
 
+echo "4. Pulling needed docker image openvas-docker-lite"
 #Pull OpenVAS-lite docker image (thanks TheDoctor0)
 docker pull thedoctor0/openvas-docker-lite
 
@@ -44,9 +46,11 @@ docker pull thedoctor0/openvas-docker-lite
 ##################################################################################
 ##################################################################################
 
+echo "5. Creating temp_stage folder"
 #temp dir for staging
 mkdir /home/$cur_user/temp_stage
 
+echo "6. Creating directory to hold files needed to be copied to DMZ server. Located at ~/files_to_copy (under current user to run this script"
 #persistent directory for copying post setup
 mkdir /home/$cur_user/files_to_copy &&\
         cd /home/$cur_user/files_to_copy
@@ -57,6 +61,7 @@ mkdir /home/$cur_user/files_to_copy &&\
 ##################################################################################
 ##################################################################################
 
+echo "7. Getting DMZ server public key for SSH reverse tunnel... UPDATE IP IN SCRIPT IF NEEDED"
 #get host pub key from remote SSH server
 ssh-keyscan -H 10.0.4.7 >> /home/$cur_user/.ssh/known_hosts
 
@@ -67,14 +72,17 @@ ssh-keyscan -H 10.0.4.7 >> /home/$cur_user/.ssh/known_hosts
 ##################################################################################
 ##################################################################################
 
-#NEED TO COPY PRIVATE KEY LATER
-
+echo "8. Generating public and private client key for the current user to run script"
 /bin/su -c "ssh-keygen -f id_rsa -t rsa -N ''" - $cur_user
+
+echo "9. Copying keys to users ~/.ssh directory"
 cp id_rsa.pub /home/$cur_user/.ssh/ &&\
 	cp id_rsa.pub /home/$cur_user/files_to_copy/ &&\
-       	cp id_rsa.pub /home/$cur_user/.ssh/
+       	cp id_rsa.pub /home/$cur_user/.ssh/ &&\
+	cp id_rsa /home/$cur_user/.ssh
 
 #Download rtunnel.service file
+echo "9. Downloading rtunnel.service, which will autostart reverse SSH tunnel on startup"
 cd /home/$cur_user/temp_stage
 wget -O rtunnel.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/rtunnel.service
 
@@ -85,6 +93,7 @@ sed -i "s/[REMOTE PORT]/45565/" rtunnel.service &&\
 sed -i "s/[REMOTE LOGIN/tobarows/" rtunnel.service &&\
 sed -i "s/[REMOTE HOST]/10.0.4.7/" rtunnel.service
 
+echo "10. Copying rtunnel.service to systemd"
 #copy to systemd
 cp rtunnel.service /etc/systemd/system/
 
@@ -93,7 +102,7 @@ cp rtunnel.service /etc/systemd/system/
 # Set up dirs and scripts to run docker
 ##################################################################################
 ##################################################################################
-
+echo "11. Making scanuser directories under /home/scanuser/"
 #Make directories
 mkdir /home/scanuser/gvm-data &&\
 	mkdir /home/scanuser/gvm-data/reports &&\
@@ -105,6 +114,7 @@ mkdir /home/scanuser/gvm-data &&\
 # download script to run containers and set up autostart
 ##################################################################################
 ##################################################################################
+echo "12. Downloading scripts to run scans to /home/scanuser/gvm-data"
 wget -O run_scan_containers.sh https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/run_scan_containers.sh
 wget -O docker_kill.sh https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/docker_kill.sh
 chmod +x run_scan_containers.sh
@@ -116,8 +126,11 @@ chmod +x docker_kill.sh
 ##################################################################################
 ##################################################################################
 #copy new service to systemd
+echo "13. Downloading docker_scan.service that will run scans on startup"
 cd /home/$cur_user/temp_stage
 wget -O docker_scan.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/docker_scan.service
+
+echo "14. Copying docker_scan.service to systemd"
 cp dockerscan.service /etc/systemd/system/
 
 ##################################################################################
@@ -126,12 +139,15 @@ cp dockerscan.service /etc/systemd/system/
 ##################################################################################
 ##################################################################################
 #reload the daemon and start service, enable it for autostart
+echo "15. Reloading system daemon"
 systemctl reload-daemon
 
+echo "16. Starting and enabling rtunnel.service (Reverse SSH Tunnel)"
 #Start reverse SSH tunnel and enable at boot
 systemctl start rtunnel
 systemctl enable rtunnel
 
+echo "17. Starting and enabling docker_scan.service (Docker containers to scan network)"
 #Start docker container service and enable at boot
 systemctl start docker_scan
 systemctl enable docker_scan
@@ -141,5 +157,7 @@ systemctl enable docker_scan
 # Remove temp directories
 ##################################################################################
 ##################################################################################
-
+echo "18. Removing temp directories"
 rm -rf /home/$cur_user/temp_stage
+
+echo "Setup is complete!"
