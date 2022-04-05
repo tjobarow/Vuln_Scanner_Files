@@ -18,7 +18,8 @@ apt -y autoremove
 apt install docker\
 	autossh\
 	moreutils\
-	network-manager
+	network-manager\
+	net-tools
 
 ##################################################################################
 ##################################################################################

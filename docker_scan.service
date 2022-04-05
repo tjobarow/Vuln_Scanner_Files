@@ -1,0 +1,18 @@
+[Unit]
+Description = Start docker containers
+After =  network-online.target 
+#Requires
+
+[Service]
+User = root
+ExecStartPre=/bin/sleep 120
+ExecStart = "/home/scanuser/gvm-data/run_scan_containers.sh"
+ExecStop= "/home/scanuser/gvm-data/docker_kill.sh"
+RestartSec=5
+Restart=always
+
+
+[Install]
+WantedBy = multi-user.target
+
+
