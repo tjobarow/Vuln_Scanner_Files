@@ -64,7 +64,8 @@ echo "Target for scans will be $full_cidr_subnet..."
 ##############################################################################
 
 #Run the full and fast scan and save it to full_fast_<DATE>.xml
-docker run --rm -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -o=full_fast_$date.xml | tee >(ts "%m-%m-%y %H:%M:%S" > /home/scanuser/gvm-data/logs/full_fast_docker_output.log)
+docker run --restart=always -d --name=full-fast-scan -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -o=full_fast_$date.xml
 
 #Run the system discovery scan and save it to system_discovery_<DATE>.xml
-docker run --rm -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -p="System Discovery" -o=system_discovery_$date.xml | tee >(ts "%m-%m-%y %H:%M:%S" > /home/scanuser/gvm-data/logs/system_disc_docker_output.log)
+docker run --restart=always -d --name=system-disc-scan -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -p="System Discovery" -o=system_discovery_$date.xml
+

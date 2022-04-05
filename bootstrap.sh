@@ -76,7 +76,7 @@ echo "8. Generating public and private client key for the current user to run sc
 /bin/su -c "ssh-keygen -f id_rsa -t rsa -N ''" - $cur_user
 
 echo "9. Copying keys to users ~/.ssh directory"
-cp /home/$cur_usr/id_rsa.pub /home/$cur_user/.ssh/ &&\
+cp /home/$cur_user/id_rsa.pub /home/$cur_user/.ssh/ &&\
 	cp /home/$cur_user/id_rsa.pub /home/$cur_user/files_to_copy/ &&\
        	cp /home/$cur_user/id_rsa /home/$cur_user/.ssh/
 
