@@ -88,10 +88,10 @@ wget -O rtunnel.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_
 # NEED TO UPDATE REMOTE LOGIN WHEN DMZ SERVER IS DEPLOYED
 #Use sed to insert connection info
 sed -i "s/root/$cur_user/" rtunnel.service &&\
-sed -i "s/[LOCAL USER]/$cur_user/" rtunnel.service &&\
-sed -i "s/[REMOTE PORT]/45566/" rtunnel.service &&\
-sed -i "s/[REMOTE LOGIN/tobarows/" rtunnel.service &&\
-sed -i "s/[REMOTE HOST]/10.0.4.7/" rtunnel.service
+sed -i "s/\[LOCAL\sUSER\]/$cur_user/" rtunnel.service &&\
+sed -i "s/\[REMOTE\sPORT\]/45566/" rtunnel.service &&\
+sed -i "s/\[REMOTE\sLOGIN\]/tobarows/" rtunnel.service &&\
+sed -i "s/\[REMOTE\sHOST\]/10.0.4.7/" rtunnel.service
 
 echo "11. Copying rtunnel.service to systemd"
 #copy to systemd
