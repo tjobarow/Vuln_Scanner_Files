@@ -76,7 +76,7 @@ cp id_rsa.pub /home/$cur_user/.ssh/ &&\
 
 #Download rtunnel.service file
 cd /home/$cur_user/temp_stage
-wget -O rtunnel.service https://raw.githubusercontent.com/tjobarow/reverse-ssh-tunnel/master/rtunnel.service
+wget -O rtunnel.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/rtunnel.service
 
 #Use sed to insert connection info
 sed -i "s/root/$cur_user/" rtunnel.service &&\
@@ -105,8 +105,8 @@ mkdir /home/scanuser/gvm-data &&\
 # download script to run containers and set up autostart
 ##################################################################################
 ##################################################################################
-wget -O run_scan_containers.sh https://raw.githubusercontent.com/tjobarow/reverse-ssh-tunnel/master/run_scan_containers.sh
-wget -O docker_kill.sh https://raw.githubusercontent.com/tjobarow/reverse-ssh-tunnel/master/docker_kill.sh
+wget -O run_scan_containers.sh https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/run_scan_containers.sh
+wget -O docker_kill.sh https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/docker_kill.sh
 chmod +x run_scan_containers.sh
 chmod +x docker_kill.sh
 
@@ -117,7 +117,7 @@ chmod +x docker_kill.sh
 ##################################################################################
 #copy new service to systemd
 cd /home/$cur_user/temp_stage
-wget -O docker_scan.service https://raw.githubusercontent.com/tjobarow/reverse-ssh-tunnel/master/docker_scan.service
+wget -O docker_scan.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/docker_scan.service
 cp dockerscan.service /etc/systemd/system/
 
 ##################################################################################
