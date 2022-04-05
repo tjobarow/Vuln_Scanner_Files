@@ -10,13 +10,13 @@ cur_user=$SUDO_USER
 ##################################################################################
 echo "1. Performing system updates and general maintainence"
 #Update package list and distro
-apt update
+apt -y update
 apt -y dist-upgrade
 apt -y autoremove
 
 echo "2. Installing needed dependencies"
 #Install package dependencies
-apt install docker\
+apt -y install docker\
 	autossh\
 	moreutils\
 	network-manager\
@@ -76,24 +76,24 @@ echo "8. Generating public and private client key for the current user to run sc
 /bin/su -c "ssh-keygen -f id_rsa -t rsa -N ''" - $cur_user
 
 echo "9. Copying keys to users ~/.ssh directory"
-cp id_rsa.pub /home/$cur_user/.ssh/ &&\
-	cp id_rsa.pub /home/$cur_user/files_to_copy/ &&\
-       	cp id_rsa.pub /home/$cur_user/.ssh/ &&\
-	cp id_rsa /home/$cur_user/.ssh
+cp /home/$cur_usr/id_rsa.pub /home/$cur_user/.ssh/ &&\
+	cp /home/$cur_user/id_rsa.pub /home/$cur_user/files_to_copy/ &&\
+       	cp /home/$cur_user/id_rsa /home/$cur_user/.ssh/
 
 #Download rtunnel.service file
-echo "9. Downloading rtunnel.service, which will autostart reverse SSH tunnel on startup"
+echo "10. Downloading rtunnel.service, which will autostart reverse SSH tunnel on startup"
 cd /home/$cur_user/temp_stage
 wget -O rtunnel.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/rtunnel.service
 
+# NEED TO UPDATE REMOTE LOGIN WHEN DMZ SERVER IS DEPLOYED
 #Use sed to insert connection info
 sed -i "s/root/$cur_user/" rtunnel.service &&\
 sed -i "s/[LOCAL USER]/$cur_user/" rtunnel.service &&\
-sed -i "s/[REMOTE PORT]/45565/" rtunnel.service &&\
+sed -i "s/[REMOTE PORT]/45566/" rtunnel.service &&\
 sed -i "s/[REMOTE LOGIN/tobarows/" rtunnel.service &&\
 sed -i "s/[REMOTE HOST]/10.0.4.7/" rtunnel.service
 
-echo "10. Copying rtunnel.service to systemd"
+echo "11. Copying rtunnel.service to systemd"
 #copy to systemd
 cp rtunnel.service /etc/systemd/system/
 
@@ -102,7 +102,7 @@ cp rtunnel.service /etc/systemd/system/
 # Set up dirs and scripts to run docker
 ##################################################################################
 ##################################################################################
-echo "11. Making scanuser directories under /home/scanuser/"
+echo "12. Making scanuser directories under /home/scanuser/"
 #Make directories
 mkdir /home/scanuser/gvm-data &&\
 	mkdir /home/scanuser/gvm-data/reports &&\
@@ -114,7 +114,7 @@ mkdir /home/scanuser/gvm-data &&\
 # download script to run containers and set up autostart
 ##################################################################################
 ##################################################################################
-echo "12. Downloading scripts to run scans to /home/scanuser/gvm-data"
+echo "13. Downloading scripts to run scans to /home/scanuser/gvm-data"
 wget -O run_scan_containers.sh https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/run_scan_containers.sh
 wget -O docker_kill.sh https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/docker_kill.sh
 chmod +x run_scan_containers.sh
@@ -126,12 +126,12 @@ chmod +x docker_kill.sh
 ##################################################################################
 ##################################################################################
 #copy new service to systemd
-echo "13. Downloading docker_scan.service that will run scans on startup"
+echo "14. Downloading docker_scan.service that will run scans on startup"
 cd /home/$cur_user/temp_stage
 wget -O docker_scan.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_Files/main/docker_scan.service
 
-echo "14. Copying docker_scan.service to systemd"
-cp dockerscan.service /etc/systemd/system/
+echo "15. Copying docker_scan.service to systemd"
+cp docker_scan.service /etc/systemd/system/
 
 ##################################################################################
 ##################################################################################
@@ -139,15 +139,15 @@ cp dockerscan.service /etc/systemd/system/
 ##################################################################################
 ##################################################################################
 #reload the daemon and start service, enable it for autostart
-echo "15. Reloading system daemon"
-systemctl reload-daemon
+echo "16. Reloading system daemon"
+systemctl daemon-reload
 
-echo "16. Starting and enabling rtunnel.service (Reverse SSH Tunnel)"
+echo "17. Starting and enabling rtunnel.service (Reverse SSH Tunnel)"
 #Start reverse SSH tunnel and enable at boot
 systemctl start rtunnel
 systemctl enable rtunnel
 
-echo "17. Starting and enabling docker_scan.service (Docker containers to scan network)"
+echo "18. Starting and enabling docker_scan.service (Docker containers to scan network)"
 #Start docker container service and enable at boot
 systemctl start docker_scan
 systemctl enable docker_scan
@@ -157,7 +157,7 @@ systemctl enable docker_scan
 # Remove temp directories
 ##################################################################################
 ##################################################################################
-echo "18. Removing temp directories"
+echo "19. Removing temp directories"
 rm -rf /home/$cur_user/temp_stage
 
-echo "Setup is complete!"
+echo "20. Setup is complete!"
