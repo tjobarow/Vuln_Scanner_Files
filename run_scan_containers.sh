@@ -8,7 +8,7 @@
 
 #Get date for filename
 date=$(date +%b-%d-%Y_%H:%M:%S)
-echo $date
+echo $date >> /home/scanuser/gvm-data/logs/run_scan_containers.log
 
 
 ##############################################################################
@@ -54,7 +54,7 @@ cidr_not="/${split_ip[1]}"
 #combine subnet with mask
 full_cidr_subnet="${sub_base_addr}${cidr_not}"
 
-echo "Target for scans will be $full_cidr_subnet..."   
+echo "Target for scans will be $full_cidr_subnet..." >> /home/scanuser/gvm-data/logs/run_scan_containers.log
 
 ##############################################################################
 #
@@ -64,10 +64,13 @@ echo "Target for scans will be $full_cidr_subnet..."
 ##############################################################################
 
 #Run the full and fast scan and save it to full_fast_<DATE>.xml
-docker run --restart=always -d --name=full-fast-scan -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -o=full_fast_$date.xml
+echo "The container ID of the full and fast scan is: " >> /home/scanuser/gvm-data/logs/run_scan_containers.log
+docker run --restart=always -d --name=full-fast-scan -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -o=full_fast_$date.xml >> /home/scanuser/gvm-data/logs/run_scan_containers.log
+
 
 #Run the system discovery scan and save it to system_discovery_<DATE>.xml
-docker run --restart=always -d --name=system-disc-scan -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -p="System Discovery" -o=system_discovery_$date.xml
+echo "The container ID of the system discovery scan is: " >> /home/scanuser/gvm-data/logs/run_scan_containers.log
+docker run --restart=always -d --name=system-disc-scan -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -p="System Discovery" -o=system_discovery_$date.xmli >> /home/scanuser/gvm-data/logs/run_scan_containers.log
 
 #This will save docker output to log files
 docker logs --details --follow full-fast-scan >> /home/scanuser/gvm-data/logs/full-fast-scan.log 2>> /home/scanuser/gvm-data/logs/full-fast-scan.err &
