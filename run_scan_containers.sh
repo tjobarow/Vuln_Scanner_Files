@@ -69,3 +69,6 @@ docker run --restart=always -d --name=full-fast-scan -v /home/scanuser/gvm-data/
 #Run the system discovery scan and save it to system_discovery_<DATE>.xml
 docker run --restart=always -d --name=system-disc-scan -v /home/scanuser/gvm-data/reports:/reports/:rw thedoctor0/openvas-docker-lite python3 -u scan.py $full_cidr_subnet -p="System Discovery" -o=system_discovery_$date.xml
 
+#This will save docker output to log files
+docker logs --details --follow full-fast-scan >> /home/scanuser/gvm-data/logs/full-fast-scan.log 2>> /home/scanuser/gvm-data/logs/full-fast-scan.err &
+docker logs --details --follow system-disc-scan >> /home/scanuser/gvm-data/logs/system-disc-scan.log 2>> /home/scanuser/gvm-data/logs/system-disc-scan.err &
