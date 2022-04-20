@@ -1,1 +1,0 @@
--bash: /home/scanuser/gvm-data/logs/full_fast_docker_output.log: Permission denied
