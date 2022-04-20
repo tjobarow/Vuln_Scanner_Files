@@ -109,6 +109,27 @@ mkdir /home/scanuser/gvm-data &&\
 	mkdir /home/scanuser/gvm-data/logs &&\
 	cd /home/scanuser/gvm-data
 
+#Make docker log files
+touch /home/scanuser/gvm-data/logs/full-fast-scan.log &&\
+	/home/scanuser/gvm-data/logs/full-fast-scan.err &&\
+	/home/scanuser/gvm-data/logs/system-disc-scan.log &&\
+	/home/scanuser/gvm-data/logs/system-disc-scan.err &&\
+
+##################################################################################
+##################################################################################
+# Create files to log to for docker, and symlink to siteone user directory
+##################################################################################
+##################################################################################
+echo "12a. Creating directory at /home/siteone/docker_logs and symlinking the docker logs from scanuser to the folder"
+
+#Make directory to hold files
+mkdir /home/siteone/docker_logs
+
+ln -s /home/scanuser/gvm-data/logs/full-fast-scan.log /home/siteone/docker_logs/
+ln -s /home/scanuser/gvm-data/logs/full-fast-scan.err /home/siteone/docker_logs/
+ln -s /home/scanuser/gvm-data/logs/system-disc-scan.log /home/siteone/docker_logs/
+ln -s /home/scanuser/gvm-data/logs/system-disc-scan.err /home/siteone/docker_logs/
+
 ##################################################################################
 ##################################################################################
 # download script to run containers and set up autostart
