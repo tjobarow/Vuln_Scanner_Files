@@ -123,12 +123,14 @@ touch /home/scanuser/gvm-data/logs/full-fast-scan.log &&\
 echo "12a. Creating directory at /home/siteone/docker_logs and symlinking the docker logs from scanuser to the folder"
 
 #Make directory to hold files
-mkdir /home/siteone/docker_logs
+mkdir /home/$cur_user/docker_logs &&\
+	/home/$cur_user/docker_logs/reports
 
-ln -s /home/scanuser/gvm-data/logs/full-fast-scan.log /home/siteone/docker_logs/
-ln -s /home/scanuser/gvm-data/logs/full-fast-scan.err /home/siteone/docker_logs/
-ln -s /home/scanuser/gvm-data/logs/system-disc-scan.log /home/siteone/docker_logs/
-ln -s /home/scanuser/gvm-data/logs/system-disc-scan.err /home/siteone/docker_logs/
+ln -s /home/scanuser/gvm-data/logs/full-fast-scan.log /home/$cur_user/docker_logs/
+ln -s /home/scanuser/gvm-data/logs/full-fast-scan.err /home/$cur_user/docker_logs/
+ln -s /home/scanuser/gvm-data/logs/system-disc-scan.log /home/$cur_user/docker_logs/
+ln -s /home/scanuser/gvm-data/logs/system-disc-scan.err /home/$cur_user/docker_logs/
+ln -s /home/scanuser/gvm-data/reports /home/$cur_user/docker_logs/reports
 
 ##################################################################################
 ##################################################################################
