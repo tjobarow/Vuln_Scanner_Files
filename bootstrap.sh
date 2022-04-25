@@ -63,7 +63,7 @@ mkdir /home/$cur_user/files_to_copy &&\
 
 echo "7. Getting DMZ server public key for SSH reverse tunnel... UPDATE IP IN SCRIPT IF NEEDED"
 #get host pub key from remote SSH server
-ssh-keyscan -H 10.0.4.7 >> /home/$cur_user/.ssh/known_hosts
+ssh-keyscan -H -p 45566 192.69.100.14 >> /home/$cur_user/.ssh/known_hosts
 
 ##################################################################################
 ##################################################################################
@@ -89,9 +89,9 @@ wget -O rtunnel.service https://raw.githubusercontent.com/tjobarow/Vuln_Scanner_
 #Use sed to insert connection info
 sed -i "s/root/$cur_user/" rtunnel.service &&\
 sed -i "s/\[LOCAL\sUSER\]/$cur_user/" rtunnel.service &&\
-sed -i "s/\[REMOTE\sPORT\]/45566/" rtunnel.service &&\
-sed -i "s/\[REMOTE\sLOGIN\]/tobarows/" rtunnel.service &&\
-sed -i "s/\[REMOTE\sHOST\]/10.0.4.7/" rtunnel.service
+sed -i "s/\[REMOTE\sPORT\]/45555/" rtunnel.service &&\
+sed -i "s/\[REMOTE\sLOGIN\]/svc-scanner-sec/" rtunnel.service &&\
+sed -i "s/\[REMOTE\sHOST\]/192.69.100.14/" rtunnel.service
 
 echo "11. Copying rtunnel.service to systemd"
 #copy to systemd
